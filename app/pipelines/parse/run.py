@@ -1,7 +1,7 @@
 from typing import Dict, Any
-from ...agents.chrono.structure import segment_text
+from ...agents.chrono_agent.structure import segment_text
 from ...agents.baymax.meaning import analyze_meaning
-from ...agents.vera.qa import verify_payload
+from ...agents.vera_agent.qa import verify_payload
 from .clean_text import basic_clean
 from .tagger import basic_tagger
 
