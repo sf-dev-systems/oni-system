@@ -1,0 +1,57 @@
+openapi: 3.1.0
+info:
+  title: ONI Minimal Pipeline API
+  version: "0.1"
+
+servers:
+  - url: https://mike-fenestral-turbulently.ngrok-free.dev
+
+paths:
+  /health:
+    get:
+      operationId: healthCheck
+      summary: Check system health.
+      responses:
+        "200":
+          description: OK
+
+  /minimal/ingest:
+    post:
+      operationId: ingestMinimal
+      summary: Run minimal ONI pipeline.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [text]
+              properties:
+                text:
+                  type: string
+      responses:
+        "200":
+          description: Minimal ONI pipeline result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+
+  /test/ping:
+    get:
+      operationId: testPing
+      summary: Ping test
+      responses:
+        "200":
+          description: Pong
+
+  /pipeline/run:
+    post:
+      operationId: runPipeline
+      summary: Placeholder endpoint
+      responses:
+        "200":
+          description: OK

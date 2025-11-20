@@ -14,8 +14,10 @@ class Settings:
     def __init__(self) -> None:
         self.environment = os.getenv("ENVIRONMENT", "local")
 
-        self.supabase_url = os.getenv("SUPABASE_URL", "")
-        self.supabase_key = os.getenv("SUPABASE_KEY", "")
+        self.SUPABASE_URL = os.getenv("SUPABASE_URL", "")
+        self.SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY", "")
+        self.supabase_url = self.SUPABASE_URL
+        self.supabase_key = self.SUPABASE_ANON_KEY
 
         self.pinecone_api_key = os.getenv("PINECONE_API_KEY", "")
         self.pinecone_index = os.getenv("PINECONE_INDEX_NAME", "")
@@ -30,3 +32,6 @@ class Settings:
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
+
+
+settings = get_settings()

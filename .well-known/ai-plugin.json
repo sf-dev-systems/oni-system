@@ -1,0 +1,18 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "ONI System",
+  "name_for_model": "oni_system",
+  "description_for_human": "Control and run ONI pipelines.",
+  "description_for_model": "Provides pipeline execution and system actions.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://mike-fenestral-turbulently.ngrok-free.dev/.well-known/openapi.yaml",
+    "is_user_authenticated": false
+  },
+  "logo_url": "",
+  "contact_email": "",
+  "legal_info_url": ""
+}
