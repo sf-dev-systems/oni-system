@@ -1,21 +1,13 @@
 from fastapi import APIRouter
-from pydantic import BaseModel
 
-from app.utils.gpt_bridge import call_model
-
-
-router = APIRouter(prefix="/pipeline", tags=["pipeline"])
+pipeline_router = APIRouter(prefix="/pipeline")
 
 
-class PipelineRequest(BaseModel):
-    text: str
+@pipeline_router.post("/run")
+async def run_pipeline():
+    return {"status": "ok", "message": "pipeline started"}
 
 
-@router.post("/run")
-def run_pipeline(payload: PipelineRequest):
-    """
-    Run the placeholder pipeline and bridge to the GPT stub.
-    Later this can orchestrate Chrono/VERA/Oni again.
-    """
-    model_output = call_model(payload.text)
-    return {"processed": True, "input": payload.text, "model_output": model_output}
+@pipeline_router.get("/run")
+async def run_pipeline_info():
+    return {"message": "This endpoint requires POST."}

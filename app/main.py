@@ -5,10 +5,9 @@ from app.routes import api_router
 
 app = FastAPI()
 
-# Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with specific origins
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -21,8 +20,6 @@ app.include_router(api_router)
 def health_check():
     return {"status": "ok", "service": "oni-system"}
 
-
 @app.post("/pipeline/run", tags=["pipeline"])
 def run_pipeline():
-    # Placeholder pipeline run endpoint; replace with real pipeline invocation as needed.
     return {"status": "ok", "message": "pipeline started"}

@@ -1,63 +1,50 @@
-from uuid import uuid4
-from datetime import datetime, timezone
+from typing import Dict, Any
+from app.victor.storage import VictorClient
 
-from app.pipelines.minimal_models import (
-    SegmentPacket,
-    EventPacket,
-    QAPacket,
-    BaymaxPacket,
-    OniPacket,
-)
-from app.oni.global_state import (
-    record_decision,
-    record_unresolved,
-    record_contradiction,
-)
-from app.oni.directives import build_directives
+"""
+ONI v2 Executive Logic
 
+Responsibilities:
+- Manage thread memory using Victor v2 tables
+- Assign or retrieve thread_id for each pipeline request
+- Record unresolved items detected by Chrono or VERA
+- Provide minimal thread state summary
+"""
 
-def oni_process(
-    segment_packet: SegmentPacket,
-    event_packet: EventPacket,
-    qa_packet: QAPacket,
-    baymax_packet: BaymaxPacket,
-) -> OniPacket:
-    directives = build_directives(event_packet, qa_packet, baymax_packet)
+def get_or_create_thread(victor: VictorClient, thread_key: str) -> Dict[str, Any]:
+    """
+    Finds an existing thread in Victor or creates a new one.
 
-    text_lower = event_packet.content.lower()
-    thread_updates = {
-        "decision": False,
-        "unresolved": False,
-        "contradiction": False,
+    Returns:
+        {
+            "thread_id": str,
+            "state": str
+        }
+    """
+    existing = victor.find_thread(thread_key)
+    if existing:
+        return existing
+
+    return victor.create_thread(thread_key)
+
+def record_unresolved(victor: VictorClient, thread_id: str, item: Dict[str, Any]) -> None:
+    """
+    Stores an unresolved item (question or decision) associated with a thread.
+    """
+    victor.store_unresolved_item(thread_id, item)
+
+def summarize_thread(victor: VictorClient, thread_id: str) -> Dict[str, Any]:
+    """
+    Provides a minimal summary of the thread for ONI v2 output.
+
+    Returns:
+        {
+            "thread_id": ...,
+            "unresolved_count": int
+        }
+    """
+    unresolved = victor.get_unresolved_items(thread_id)
+    return {
+        "thread_id": thread_id,
+        "unresolved_count": len(unresolved)
     }
-
-    if event_packet.event_type == "decision":
-        record_decision(event_packet.event_id, event_packet.content)
-        thread_updates["decision"] = True
-
-    if directives.get("contradiction"):
-        record_contradiction(event_packet.event_id, "contradiction_detected")
-        thread_updates["contradiction"] = True
-
-    if "not sure" in text_lower or "maybe" in text_lower:
-        record_unresolved(event_packet.event_id, event_packet.content)
-        thread_updates["unresolved"] = True
-
-    summary = (
-        f"Event {event_packet.event_type}, subtype={event_packet.subtype}, "
-        f"intensity={event_packet.intensity}, qa_override={qa_packet.override}, "
-        f"tension={baymax_packet.reasoning.get('tension_score')}, "
-        f"contradiction={baymax_packet.reasoning.get('contradiction_detected')}"
-    )
-
-    return OniPacket(
-        oni_id=f"oni_{uuid4().hex}",
-        event_id=event_packet.event_id,
-        qa_id=qa_packet.qa_id,
-        baymax_id=baymax_packet.baymax_id,
-        directives=directives,
-        thread_updates=thread_updates,
-        summary=summary,
-        timestamp=datetime.now(timezone.utc),
-        module="oni",
-    )

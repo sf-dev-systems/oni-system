@@ -1,18 +1,13 @@
-TITLE: ONI System Folder Structure Contract
-INDEX
+# ONI System Folder Structure Contract
 
-Root layout
+Purpose  
+Defines the exact folder layout of the ONI System backend.  
+This contract controls WHAT folders exist and WHAT files may live inside them.  
+It defines structure only. No behaviors.
 
-Required subfolders
+------------------------------------------------------------
 
-Required file roles
-
-Allowed contents
-
-Forbidden changes
-
-SECTION 1. ROOT LAYOUT
-Your backend MUST follow this exact structure:
+## Root Layout
 
 ONI_System/
     app/
@@ -22,17 +17,16 @@ ONI_System/
     run.py
     test_ngrok.ps1
 
+No other folders or files may be added at root without explicit user approval.
 
-Nothing else may be added at the root unless intentionally approved.
+------------------------------------------------------------
 
-SECTION 2. REQUIRED SUBFOLDERS
-Inside app/, the required subfolders are:
+## app/ Required Subfolders
 
 app/
     main.py
     config.py
     supabase_client.py
-    router.py          (if present)
     routes/
     pipelines/
     oni/
@@ -42,66 +36,50 @@ app/
     victor/
     utils/
 
+These subfolders are FIXED.  
+Codex and Claude must NOT create new module folders.  
+All code must remain inside these defined modules only.
 
-These folders are FIXED.
-Codex and Claude must NOT create new top-level module folders.
-All AI-module logic MUST live in these.
+------------------------------------------------------------
 
-SECTION 3. REQUIRED FILE ROLES
-This defines what each folder is responsible for:
+## Allowed Contents
 
-app/main.py
-    FastAPI app object
-    router registration
-    CORS settings
-    /.well-known mount
+### app/routes/
+Contains ONLY router files ending in *_routes.py  
+No logic. No pipelines. No database calls.
 
-app/routes/
-    All API route files ONLY
-    No business logic here
+### app/pipelines/
+Contains ONLY pipeline orchestration code.  
+Pipelines call modules but do not contain module logic.
 
-app/pipelines/
-    All pipeline orchestration code
-    Pipeline → calls ONI/Baymax/Chrono/Victor/VERA
+### app/oni/
+ONI executive logic only.  
+planning, directive logic, thread reasoning.
 
-app/oni/
-    Planning, goal selection, reasoning logic for ONI orchestrator
+### app/chrono/
+Chrono classification logic only.
 
-app/baymax/
-    Meaning inference, semantics, embeddings
+### app/baymax/
+Baymax reasoning logic only.
 
-app/chrono/
-    Classification, segmentation, timeline calculations
+### app/vera/
+Validation & QA logic only.
 
-app/vera/
-    Validation, error detection, confirmation logic
+### app/victor/
+Persistent storage utilities only.
 
-app/victor/
-    Persistent storage utilities, file/log handling
+### app/utils/
+Shared helpers such as gpt_bridge.
 
-app/utils/
-    Shared helpers like gpt_bridge
+------------------------------------------------------------
 
+## Forbidden
 
-SECTION 4. ALLOWED CONTENTS
-Each folder must contain ONLY its own responsibilities.
+• No new top-level modules  
+• No moving logic between modules  
+• No pipelines inside routes  
+• No storage code in pipelines  
+• No directives inside chrono  
+• No expansion outside allowed folders
 
-Examples:
-
-✔ app/routes/ must contain *_routes.py only
-✔ app/pipelines/ must contain pipeline orchestration code only
-✔ app/oni/ must contain ONI logic only
-
-NO cross-module mixing.
-
-SECTION 5. FORBIDDEN CHANGES
-Codex, Claude, Cursor, GPT must NOT:
-
-• Create a new router folder (like routers/)
-• Move pipeline code into routes
-• Create new modules outside: oni, chrono, baymax, vera, victor
-• Rename prefixes or folder names
-• Place business logic inside route files
-• Attach pipelines directly to main.py
-• Delete or override app/routes/__init__.py
-• Add new root folders without explicit user approval
+END
