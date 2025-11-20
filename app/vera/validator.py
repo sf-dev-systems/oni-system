@@ -144,6 +144,7 @@ def vera_validate(event: EventPacket) -> QAPacket:
     corrected_event = None
     override_changes = None
     reason = None
+    unresolved = event.event_type == "unresolved question"
 
     if override:
         reason = issues[0]["reason"] if issues else "schema_violation"
@@ -160,5 +161,6 @@ def vera_validate(event: EventPacket) -> QAPacket:
         corrected_event=corrected_event_dict,
         qa_timestamp=datetime.now(timezone.utc).isoformat(),
         request_user_confirmation=False,
+        unresolved=unresolved,
     )
     return qa

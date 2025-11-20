@@ -34,6 +34,7 @@ class QAPacket(BaseModel):
     corrected_event: dict | None = None
     qa_timestamp: str | None = None
     request_user_confirmation: bool = False
+    unresolved: bool = False
 
 
 class StorageRecord(BaseModel):

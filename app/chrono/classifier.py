@@ -33,6 +33,8 @@ ALLOWED_PATTERN_SHAPES = {"approach_avoid", "threshold_fear", "recursion_spiral"
 
 def classify_event_type(text: str) -> str:
     lower = text.lower()
+    if "unresolved" in lower or "i don't know" in lower or "not sure" in lower:
+        return "unresolved question"
     if "lock this in" in lower or "decide" in lower:
         return "decision"
     if "update:" in lower or "status:" in lower or "update " in lower:
@@ -45,8 +47,6 @@ def classify_event_type(text: str) -> str:
         return "drift alert"
     if "version" in lower:
         return "version bump"
-    if "unresolved" in lower or "i don't know" in lower:
-        return "unresolved question"
     return "note"
 
 
