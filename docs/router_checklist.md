@@ -1,4 +1,4 @@
-Router Checklist
+ï»¿Router Checklist
 
 This file defines the correct structure for all FastAPI router files in the ONI System backend. Codex and Claude should follow these rules when creating or modifying routes.
 
@@ -67,12 +67,12 @@ Nothing else should be added to this file.
 
 File name must match import:
 
-minimal_routes.py ? from .minimal_routes import minimal_router
+minimal_routes.py â†’ from .minimal_routes import minimal_router
 
 
 Router variable must match include:
 
-minimal_router ? api_router.include_router(minimal_router)
+minimal_router â†’ api_router.include_router(minimal_router)
 
 
 Prefix + path determines final route:
@@ -110,15 +110,15 @@ If all pass, the router is correct.
 
 This checklist prevents:
 
-• 404 Not Found
-• ModuleNotFoundError
-• Blank server launches
-• Missing router registration
-• Incorrect imports
+â€¢ 404 Not Found
+â€¢ ModuleNotFoundError
+â€¢ Blank server launches
+â€¢ Missing router registration
+â€¢ Incorrect imports
 
 Use this document as the official standard for:
-• Codex
-• Claude
-• GPT
-• Cursor
-• All ONI backend development
+â€¢ Codex
+â€¢ Claude
+â€¢ GPT
+â€¢ Cursor
+â€¢ All ONI backend development
